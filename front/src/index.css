@@ -149,7 +149,7 @@ button:focus-visible {
   left: 50%; /* 横方向の中央に配置 */
   transform: translate(-50%, -50%); /* 完全に中央に配置するための補正 */
   padding: 20px; /* モーダル内の余白を設定 */
-  width: 350px; /* モーダルの幅 */
+  width: 500px; /* モーダルの幅 */
   /* height: 150px; モーダルの高さ */
   background-color: #fefefe; /* モーダルの背景色を白に設定 */
   border: 1px solid #888; /* 境界線の色を薄いグレーに設定 */
@@ -189,4 +189,9 @@ button:focus-visible {
   border-width: 1px;
   height: 30px;
   font-size: 15px;
+  border-radius: 5px;
+}
+
+::placeholder {
+	text-align: center;
 }

@@ -156,18 +156,18 @@ function Calendar(props) {
   }
 
   function viewTasks(year, month, date) {
-    const filteredTasks = props.allTasks.filter(
-      (task) =>
+    const filteredTasks = props.userTasks.filter(
+      task =>
         task.year === year &&
         task.month === month &&
-        task.date === date &&
-        task.user_name === props.userName
+        task.date === date
     );
-    const htmlTasks = filteredTasks.map((item) => (
-      <li>
+    const htmlTasks = filteredTasks.map((item, index) => (
+      <li key={index}>
         {item.hour}時{item.minute}分：{item.task}
       </li>
     ));
+    console.log(props.userTasks)
     props.setTaskList(htmlTasks);
     props.setTasksModal('block');
     props.setSelectedDay(`${year}年 ${month}月${date}日`);

@@ -1,10 +1,12 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Calendar from './Calendar';
 import Operation from './ Operation';
 
 function App() {
   const today = new Date();
+
+  //useStateの定義
   const currentMonth = today.getMonth();
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(0);
@@ -13,8 +15,25 @@ function App() {
   const [alertModal, setAlertModal] = useState('none');
   const [selectedDay, setSelectedDay] = useState();
   const [taskList, setTaskList] = useState();
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+  const [alert, setAlert] = useState();
 
+  //useRefの定義
+  const refNewTask = useRef();
+  const refYear = useRef();
+  const refMonth = useRef();
+  const refDate = useRef();
+  const refHour = useRef();
+  const refMinute = useRef();
+
+  //ユーザーを切り替えた時にユーザーのタスクリスト生成
+  useEffect(() => {
+    console.log('Effect');
+    createTaskList();
+  }, [createTaskList, userId]);
+
+  //年、月、日、時、分の選択肢生成
   const optionOfYear = [];
   for (let i = 2000; i <= 2100; i++) {
     if (i === today.getFullYear()) {
@@ -27,7 +46,6 @@ function App() {
       optionOfYear.push(<option value={i}>{i}</option>);
     }
   }
-
   const optionOfMonth = [];
   for (let i = 0; i <= 11; i++) {
     if (i === today.getMonth()) {
@@ -40,7 +58,6 @@ function App() {
       optionOfMonth.push(<option value={i + 1}>{i + 1}</option>);
     }
   }
-
   const optionOfDay = [];
   for (
     let i = 1;
@@ -57,7 +74,6 @@ function App() {
       optionOfDay.push(<option value={i}>{i}</option>);
     }
   }
-
   const optionOfHour = [];
   for (let i = 0; i <= 24; i++) {
     if (i === today.getHours()) {
@@ -70,9 +86,8 @@ function App() {
       optionOfHour.push(<option value={i}>{i}</option>);
     }
   }
-
   const optionOfMinute = [];
-  for (let i = 0; i <= 59; i++) {
+  for (let i = 0; i <= 45; i += 15) {
     if (i === today.getMinutes()) {
       optionOfMinute.push(
         <option value={i} selected>
@@ -84,35 +99,87 @@ function App() {
     }
   }
 
-  const allTasks = [];
-
-  function createAllTasks(input) {
-    allTasks.push(...input);
-    console.log(allTasks);
+  //ユーザーリストの生成
+  const allUsers = [];
+  function createAllUsers(input) {
+    allUsers.splice(0);
+    allUsers.push(...input);
+    console.log(allUsers);
   }
-
-  async function createTaskList() {
+  async function createUserList() {
     await fetch(`/api`, {
       method: 'GET',
     })
       .then((res) => res.text())
-      .then((data) => createAllTasks(JSON.parse(data)));
+      .then((data) => createAllUsers(JSON.parse(data)));
   }
 
-  createTaskList();
+  //ログインしているユーザーのタスクリストの生成
+  const userTasks = [];
+  function createUserTasks(input) {
+    userTasks.splice(0);
+    userTasks.push(...input);
+    console.log(userTasks);
+  }
+  async function createTaskList() {
+    await fetch(`/api/${userName}`, {
+      method: 'GET',
+    })
+      .then((res) => res.text())
+      .then((data) => createUserTasks(JSON.parse(data)));
+  }
+
+  createUserList();
+
+  async function addNewTask() {
+    if (!userId || !refNewTask.current.value) {
+      setAlert('user or task is not defined');
+      setNewTaskModal('none');
+      setAlertModal('block');
+    }
+    const taskObj = {
+      user_id: userId,
+      year: refYear.current.value,
+      month: refMonth.current.value,
+      date: refDate.current.value,
+      hour: refHour.current.value,
+      minute: refMinute.current.value,
+      task: refNewTask.current.value,
+    };
+    console.log(taskObj);
+    await fetch(`/api`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(taskObj),
+    })
+      .then((res) => res.text())
+      .then((data) => console.log(JSON.parse(data)));
+    setNewTaskModal('none');
+  }
 
   return (
     <>
+      {/* タイトルの描画 */}
       <h1 className="App">{userName} simple scheduler</h1>
+
+      {/* 操作ボタンの描画 */}
       <Operation
         month={month}
         setMonth={setMonth}
         setYear={setYear}
         setNewTaskModal={setNewTaskModal}
         setUserName={setUserName}
-        allTasks={allTasks}
+        allUsers={allUsers}
         setAlertModal={setAlertModal}
+        setAlert={setAlert}
+        userId={userId}
+        setUserId={setUserId}
+        userTask
+        s={userTasks}
       />
+      {/* カレンダーの描画 */}
       <Calendar
         month={month}
         setMonth={setMonth}
@@ -121,9 +188,10 @@ function App() {
         setTasksModal={setTasksModal}
         setSelectedDay={setSelectedDay}
         setTaskList={setTaskList}
-        allTasks={allTasks}
-        userName={userName}
+        userTasks={userTasks}
       />
+
+      {/* タスク追加のモーダル */}
       <div style={{ display: newTaskModal }} class="modal">
         <div class="modal-content">
           <div className="closeModal" onClick={() => setNewTaskModal('none')}>
@@ -131,36 +199,41 @@ function App() {
           </div>
           <p width={300}>Add new task</p>
           <span>
-            <select name="year" className="input">
+            <select name="year" className="input" ref={refYear}>
               {optionOfYear}
             </select>
             年
-            <select name="month" className="input">
+            <select name="month" className="input" ref={refMonth}>
               {optionOfMonth}
             </select>
             月
-            <select name="date" className="input">
+            <select name="date" className="input" ref={refDate}>
               {optionOfDay}
             </select>
             日 &emsp;
-            <select name="hour" className="input">
+            <select name="hour" className="input" ref={refHour}>
               {optionOfHour}
             </select>
             時
-            <select name="minute" className="input">
+            <select name="minute" className="input" ref={refMinute}>
               {optionOfMinute}
             </select>
             分
           </span>
-          <p>
+          <div style={{ margin: 20 }}>
             <input
-              style={{ width: 300 }}
+              style={{ width: 300, borderRadius: 10 }}
               placeholder="Please, enter your new task"
               className="input"
+              ref={refNewTask}
             ></input>
-          </p>
+          </div>
+          <button onClick={addNewTask}>Add to task list</button>
+          <div></div>
         </div>
       </div>
+
+      {/* デイリータスク表示のモーダル */}
       <div style={{ display: tasksModal }} class="modal">
         <div class="modal-content">
           <span className="closeModal" onClick={() => setTasksModal('none')}>
@@ -169,18 +242,19 @@ function App() {
           <h3>
             <u>{selectedDay}</u>
           </h3>
-          <div style={{ marginLeft: 80, marginRight: 80 }}>
+          <div style={{ marginLeft: 150 }}>
             <list style={{ textAlign: 'left' }}>{taskList}</list>
           </div>
         </div>
       </div>
+
+      {/* 警告のモーダル */}
       <div style={{ display: alertModal }} class="modal">
         <div class="modal-content">
           <span className="closeModal" onClick={() => setAlertModal('none')}>
             &times;
           </span>
-          <h3>user is not found
-          </h3>
+          <h3>{alert}</h3>
         </div>
       </div>
     </>
