@@ -2,7 +2,13 @@ const path = require('path');
 const express = require('express');
 const db = require('.');
 const app = express();
-const PORT = process.env.PORT;
+
+let PORT;
+if (process.env.NODE_ENV === 'development') {
+  PORT = process.env.DEV_PORT;
+} else if (process.env.NODE_ENV === 'production') {
+  PORT = PRO_PORT
+}
 
 app.use(express.json());
 

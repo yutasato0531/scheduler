@@ -69,6 +69,7 @@ function Calendar(props) {
       for (let j = 0; j < 7; j++) {
         if (i === 0 && j < firstDay) {
           const day = prevDayCount;
+          console.log()
           days.push(
             <td
               className="mute"
