@@ -13,7 +13,7 @@ const useNameList = [
   'Godrick',
   'Placidusax',
   'Miquella',
-  'Astel',
+  'Yuta',
   'Lanssaex',
   'Morgott',
   'Maliketh',

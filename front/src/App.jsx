@@ -10,7 +10,10 @@ function App() {
   const [year, setYear] = useState(0);
   const [newTaskModal, setNewTaskModal] = useState('none');
   const [tasksModal, setTasksModal] = useState('none');
+  const [alertModal, setAlertModal] = useState('none');
   const [selectedDay, setSelectedDay] = useState();
+  const [taskList, setTaskList] = useState();
+  const [userName, setUserName] = useState('');
 
   const optionOfYear = [];
   for (let i = 2000; i <= 2100; i++) {
@@ -40,7 +43,7 @@ function App() {
 
   const optionOfDay = [];
   for (
-    let i = 0;
+    let i = 1;
     i <= new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
     i++
   ) {
@@ -69,7 +72,7 @@ function App() {
   }
 
   const optionOfMinute = [];
-  for (let i = 0; i <= 60; i++) {
+  for (let i = 0; i <= 59; i++) {
     if (i === today.getMinutes()) {
       optionOfMinute.push(
         <option value={i} selected>
@@ -81,14 +84,34 @@ function App() {
     }
   }
 
+  const allTasks = [];
+
+  function createAllTasks(input) {
+    allTasks.push(...input);
+    console.log(allTasks);
+  }
+
+  async function createTaskList() {
+    await fetch(`/api`, {
+      method: 'GET',
+    })
+      .then((res) => res.text())
+      .then((data) => createAllTasks(JSON.parse(data)));
+  }
+
+  createTaskList();
+
   return (
     <>
-      <h1 className="App">My original scheduler</h1>
+      <h1 className="App">{userName} simple scheduler</h1>
       <Operation
         month={month}
         setMonth={setMonth}
         setYear={setYear}
         setNewTaskModal={setNewTaskModal}
+        setUserName={setUserName}
+        allTasks={allTasks}
+        setAlertModal={setAlertModal}
       />
       <Calendar
         month={month}
@@ -97,6 +120,9 @@ function App() {
         setYear={setYear}
         setTasksModal={setTasksModal}
         setSelectedDay={setSelectedDay}
+        setTaskList={setTaskList}
+        allTasks={allTasks}
+        userName={userName}
       />
       <div style={{ display: newTaskModal }} class="modal">
         <div class="modal-content">
@@ -105,15 +131,33 @@ function App() {
           </div>
           <p width={300}>Add new task</p>
           <span>
-            <select name="year" className='input'>{optionOfYear}</select>年
-            <select name="month" className='input'>{optionOfMonth}</select>月
-            <select name="date" className='input'>{optionOfDay}</select>日
-          &emsp;
-            <select name="hour" className='input'>{optionOfHour}</select>時
-            <select name="minute" className='input'>{optionOfMinute}</select>分
+            <select name="year" className="input">
+              {optionOfYear}
+            </select>
+            年
+            <select name="month" className="input">
+              {optionOfMonth}
+            </select>
+            月
+            <select name="date" className="input">
+              {optionOfDay}
+            </select>
+            日 &emsp;
+            <select name="hour" className="input">
+              {optionOfHour}
+            </select>
+            時
+            <select name="minute" className="input">
+              {optionOfMinute}
+            </select>
+            分
           </span>
           <p>
-            <input style={{width: 300}} placeholder="Please, enter your new task" className='input'></input>
+            <input
+              style={{ width: 300 }}
+              placeholder="Please, enter your new task"
+              className="input"
+            ></input>
           </p>
         </div>
       </div>
@@ -122,8 +166,21 @@ function App() {
           <span className="closeModal" onClick={() => setTasksModal('none')}>
             &times;
           </span>
-          <p>{selectedDay}</p>
-          <p>Current tasks</p>
+          <h3>
+            <u>{selectedDay}</u>
+          </h3>
+          <div style={{ marginLeft: 80, marginRight: 80 }}>
+            <list style={{ textAlign: 'left' }}>{taskList}</list>
+          </div>
+        </div>
+      </div>
+      <div style={{ display: alertModal }} class="modal">
+        <div class="modal-content">
+          <span className="closeModal" onClick={() => setAlertModal('none')}>
+            &times;
+          </span>
+          <h3>user is not found
+          </h3>
         </div>
       </div>
     </>

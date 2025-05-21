@@ -8,17 +8,17 @@ module.exports = {
       database: process.env.POSTGRES_DB,
     },
     migrations: {
-      directory: './data/migrations',
+      directory: './db/data/migrations',
     },
-    seeds: { directory: './data/seeds' },
+    seeds: { directory: './db/data/seeds' },
   },
 
   production: {
     client: 'pg',
     connection: process.env.DATABASE_URL,
     migrations: {
-      directory: './data/migrations',
+      directory: './db/data/migrations',
     },
-    seeds: { directory: './data/seeds' },
+    seeds: { directory: './db/data/seeds' },
   },
 };

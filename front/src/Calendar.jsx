@@ -72,7 +72,11 @@ function Calendar(props) {
           days.push(
             <td
               className="mute"
-              onClick={() => viewTasks(date.getFullYear() - year, month, day)}
+              onClick={() =>
+                month === 0
+                  ? viewTasks(date.getFullYear() - year - 1, 12, day)
+                  : viewTasks(date.getFullYear() - year, month, day)
+              }
             >
               <a className="muteA" href="#">
                 {prevDayCount}
@@ -86,11 +90,17 @@ function Calendar(props) {
             <td
               className="mute"
               onClick={() =>
-                viewTasks(
-                  date.getFullYear() - year,
-                  month + 2,
-                  nextMonthDayCount
-                )
+                month === 11
+                  ? viewTasks(
+                      date.getFullYear() - year + 1,
+                      1,
+                      nextMonthDayCount
+                    )
+                  : viewTasks(
+                      date.getFullYear() - year,
+                      month + 2,
+                      nextMonthDayCount
+                    )
               }
             >
               <a className="muteA" href="#">
@@ -144,9 +154,22 @@ function Calendar(props) {
     }
   }
 
-  function viewTasks(year, month, day) {
+  function viewTasks(year, month, date) {
+    const filteredTasks = props.allTasks.filter(
+      (task) =>
+        task.year === year &&
+        task.month === month &&
+        task.date === date &&
+        task.user_name === props.userName
+    );
+    const htmlTasks = filteredTasks.map((item) => (
+      <li>
+        {item.hour}時{item.minute}分：{item.task}
+      </li>
+    ));
+    props.setTaskList(htmlTasks);
     props.setTasksModal('block');
-    props.setSelectedDay(`${year}年 ${month}月${day}日`);
+    props.setSelectedDay(`${year}年 ${month}月${date}日`);
   }
 
   createDays(props.month, props.year);
@@ -179,7 +202,7 @@ function Calendar(props) {
             </th>
             <th className="yearAndMonth">
               &emsp;
-              {date.getFullYear() + props.year}.{monthName[props.month]}
+              {monthName[props.month]}.{date.getFullYear() + props.year}
               &emsp;
             </th>
             <th className="moveMonth" onClick={() => monthMove(true)}>
