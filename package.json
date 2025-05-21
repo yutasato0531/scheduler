@@ -11,7 +11,8 @@
     "migrate-down": "npx knex migrate:down --knexfile ./knexfile.js",
     "migrate-make": "knex migrate:make --knexfile ./knexfile.js",
     "seed-make": "knex seed:make --knexfile ./knexfile.js",
-    "seed-data": "knex seed:run --knexfile ./knexfile.js"
+    "seed-data": "knex seed:run --knexfile ./knexfile.js",
+    "migrate-rollback-all": "knex migrate:rollback --all"
   },
   "keywords": [],
   "author": "",
