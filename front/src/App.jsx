@@ -13,11 +13,13 @@ function App() {
   const [newTaskModal, setNewTaskModal] = useState('none');
   const [tasksModal, setTasksModal] = useState('none');
   const [alertModal, setAlertModal] = useState('none');
+  const [loginModal, setLoginModal] = useState('none');
   const [selectedDay, setSelectedDay] = useState();
   const [taskList, setTaskList] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
   const [alert, setAlert] = useState();
+  const [loginButton, setLoginButton] = useState('Log in');
 
   //useRefの定義
   const refNewTask = useRef();
@@ -26,12 +28,19 @@ function App() {
   const refDate = useRef();
   const refHour = useRef();
   const refMinute = useRef();
+  const refUserName = useRef();
+  const refPassword = useRef();
 
   //ユーザーを切り替えた時にユーザーのタスクリスト生成
   useEffect(() => {
     console.log('Effect');
     createTaskList();
   }, [createTaskList, userId]);
+
+  //Appがマウントされた時にログイン画面のモーダルを表示
+  useEffect(() => {
+    setLoginModal('block');
+  }, []);
 
   //年、月、日、時、分の選択肢生成
   const optionOfYear = [];
@@ -159,6 +168,23 @@ function App() {
     setNewTaskModal('none');
   }
 
+  function login(userName) {
+    console.log(allUsers);
+    const user = allUsers.filter((user) => user.user_name === userName);
+    if (user.length !== 0) {
+      setUserName(userName);
+      setUserId(user[0].id);
+      setLoginModal('none');
+      setLoginButton('Log out');
+      console.log(userName, userId);
+    } else {
+      setLoginModal('none');
+      setLoginButton('Log in');
+      setAlert('user is not found');
+      setAlertModal('block');
+    }
+  }
+
   return (
     <>
       {/* タイトルの描画 */}
@@ -170,14 +196,12 @@ function App() {
         setMonth={setMonth}
         setYear={setYear}
         setNewTaskModal={setNewTaskModal}
+        userTasks={userTasks}
+        setLoginModal={setLoginModal}
+        loginButton={loginButton}
+        setLoginButton={setLoginButton}
         setUserName={setUserName}
-        allUsers={allUsers}
-        setAlertModal={setAlertModal}
-        setAlert={setAlert}
-        userId={userId}
         setUserId={setUserId}
-        userTask
-        s={userTasks}
       />
       {/* カレンダーの描画 */}
       <Calendar
@@ -255,6 +279,31 @@ function App() {
             &times;
           </span>
           <h3>{alert}</h3>
+        </div>
+      </div>
+
+      {/* ログイン画面のモーダル */}
+      <div style={{ display: loginModal }} class="modal">
+        <div class="modal-content" style={{ width: 300 }}>
+          <span className="closeModal" onClick={() => {
+            setLoginModal('none');
+            setLoginButton('Log in')
+            }}>
+            &times;
+          </span>
+          <h3>Log in</h3>
+          <div style={{ textAlign: 'left', marginLeft: 80, marginBottom: 30 }}>
+            <h4 style={{ marginBottom: 0 }}>User name</h4>
+            <input ref={refUserName}></input>
+            <h4 style={{ marginBottom: 0 }}>Password</h4>
+            <input ref={refPassword}></input>
+            <button
+              style={{ marginTop: 30, marginLeft: 30 }}
+              onClick={() => login(refUserName.current.value)}
+            >
+              Log in
+            </button>
+          </div>
         </div>
       </div>
     </>
