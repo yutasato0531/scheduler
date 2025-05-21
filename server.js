@@ -2,7 +2,14 @@ const path = require('path');
 const express = require('express');
 const db = require('.');
 const app = express();
-const PORT = process.env.PORT || 3000;
+require('dotenv').config({path: '/Users/user/BTC8/scheduler/.env'});
+
+let PORT;
+if (process.env.NODE_ENV === 'development') {
+  PORT = 8080;
+} else if (process.env.NODE_ENV === 'production') {
+  PORT = 443;
+}
 
 app.use(express.json());
 
