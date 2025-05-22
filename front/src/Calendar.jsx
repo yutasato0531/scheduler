@@ -41,19 +41,24 @@ function Calendar(props) {
   //日付の生成
   const weeks = [];
   function createDays(month, year) {
+    console.log("🚀 ~ createDays ~ month, year:", month, year)
+
+    //現在の西暦を取得
+    const currentYear = date.getFullYear() + year;
+    
     //翌月の0日目から当月の最終日を設定 .getDate()はDateインスタンスの日を取得
     const daysInMonth = new Date(
-      date.getFullYear() - year,
+      currentYear,
       month + 1,
       0
     ).getDate();
 
     //当月の初日の曜日を取得 .getDay()はDateインスタンスの曜日取得
-    const firstDay = new Date(date.getFullYear() - year, month, 1).getDay();
+    const firstDay = new Date(currentYear, month, 1).getDay();
 
     //当月の0日目から前月の最終日を取得
     const daysInPrevMonth = new Date(
-      date.getFullYear() - year,
+      currentYear,
       month,
       0
     ).getDate();
@@ -75,8 +80,8 @@ function Calendar(props) {
               className="mute"
               onClick={() =>
                 month === 0
-                  ? viewTasks(date.getFullYear() - year - 1, 12, day)
-                  : viewTasks(date.getFullYear() - year, month, day)
+                  ? viewTasks(currentYear - 1, 12, day)
+                  : viewTasks(currentYear, month, day)
               }
             >
               <a className="muteA" href="#">
@@ -93,12 +98,12 @@ function Calendar(props) {
               onClick={() =>
                 month === 11
                   ? viewTasks(
-                      date.getFullYear() - year + 1,
+                      currentYear + 1,
                       1,
                       nextMonthDayCount
                     )
                   : viewTasks(
-                      date.getFullYear() - year,
+                      currentYear,
                       month + 2,
                       nextMonthDayCount
                     )
@@ -121,7 +126,7 @@ function Calendar(props) {
               <td
                 className="today"
                 onClick={() =>
-                  viewTasks(date.getFullYear() - year, month + 1, day)
+                  viewTasks(currentYear, month + 1, day)
                 }
               >
                 <a className="todayA" href="#">
@@ -135,7 +140,7 @@ function Calendar(props) {
               <td
                 className="days"
                 onClick={() =>
-                  viewTasks(date.getFullYear() - year, month + 1, day)
+                  viewTasks(currentYear, month + 1, day)
                 }
               >
                 <a className="daysA" href="#">
@@ -158,7 +163,7 @@ function Calendar(props) {
   function viewTasks(year, month, date) {
     const filteredTasks = props.userTasks.filter(
       task =>
-        task.year === year &&
+        task.year === year  &&
         task.month === month &&
         task.date === date
     );
@@ -180,10 +185,12 @@ function Calendar(props) {
       createDays(0, props.year + 1);
       props.setYear(props.year + 1);
       props.setMonth(0);
+      console.log('１月');
     } else if (!direction && props.month === 0) {
       createDays(11, props.year - 1);
       props.setYear(props.year - 1);
       props.setMonth(11);
+      console.log('１２月');
     } else if (direction) {
       createDays(props.month + 1, props.year);
       props.setMonth(props.month + 1);
@@ -212,7 +219,7 @@ function Calendar(props) {
           </tr>
         </table>
       </h2>
-      <div id="calendar" class="calendar-wrap">
+      <div id="calendar" className="calendar-wrap">
         <table className="calendar">
           <tr>{dayOfWeek}</tr>
           {weeks}

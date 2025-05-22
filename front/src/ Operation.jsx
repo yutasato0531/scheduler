@@ -19,6 +19,7 @@ function Operation(props) {
     if(props.loginButton === 'Log out'){
       props.setUserName('');
       props.setUserId('');
+      props.setTaskList([]);
       props.setLoginButton('Log in')
     }else{
       props.setLoginModal('block')

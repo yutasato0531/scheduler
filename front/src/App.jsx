@@ -52,7 +52,7 @@ function App() {
         </option>
       );
     } else {
-      optionOfYear.push(<option value={i}>{i}</option>);
+      optionOfYear.push(<option  value={i}>{i}</option>);
     }
   }
   const optionOfMonth = [];
@@ -202,6 +202,7 @@ function App() {
         setLoginButton={setLoginButton}
         setUserName={setUserName}
         setUserId={setUserId}
+        setTaskList={setTaskList}
       />
       {/* カレンダーの描画 */}
       <Calendar
@@ -216,8 +217,8 @@ function App() {
       />
 
       {/* タスク追加のモーダル */}
-      <div style={{ display: newTaskModal }} class="modal">
-        <div class="modal-content">
+      <div style={{ display: newTaskModal }} className="modal">
+        <div className="modal-content">
           <div className="closeModal" onClick={() => setNewTaskModal('none')}>
             &times;
           </div>
@@ -258,8 +259,8 @@ function App() {
       </div>
 
       {/* デイリータスク表示のモーダル */}
-      <div style={{ display: tasksModal }} class="modal">
-        <div class="modal-content">
+      <div style={{ display: tasksModal }} className="modal">
+        <div className="modal-content">
           <span className="closeModal" onClick={() => setTasksModal('none')}>
             &times;
           </span>
@@ -274,7 +275,7 @@ function App() {
 
       {/* 警告のモーダル */}
       <div style={{ display: alertModal }} class="modal">
-        <div class="modal-content">
+        <div className="modal-content">
           <span className="closeModal" onClick={() => setAlertModal('none')}>
             &times;
           </span>
