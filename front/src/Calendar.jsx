@@ -75,8 +75,7 @@ function Calendar(props) {
               <a className="muteA" href="#">
                 {prevDayCount}
                 <br />
-                <br />
-                <u>
+                <u style={{fontSize: 15}}>
                   {month === 0
                     ? countDayryTask(currentYear - 1, 12, prevDayCount)
                     : countDayryTask(currentYear - 1, month, prevDayCount)}
@@ -99,8 +98,7 @@ function Calendar(props) {
               <a className="muteA" href="#">
                 {nextMonthDayCount}
                 <br />
-                <br />
-                <u>
+                <u style={{fontSize: 15}}>
                   {month === 11
                     ? countDayryTask(currentYear + 1, 1, nextMonthDayCount)
                     : countDayryTask(currentYear + 1, month, nextMonthDayCount)}
@@ -124,8 +122,7 @@ function Calendar(props) {
                 <a className="todayA" href="#">
                   {dayCount}
                   <br />
-                  <br />
-                  <u>{countDayryTask(currentYear, month + 1, day)}</u>
+                  <u style={{fontSize: 15}}>{countDayryTask(currentYear, month + 1, day)}</u>
                 </a>
               </td>
             );
@@ -139,8 +136,7 @@ function Calendar(props) {
                 <a className="daysA" href="#">
                   {dayCount}
                   <br />
-                  <br />
-                  <u>{countDayryTask(currentYear, month + 1, day)}</u>
+                  <u style={{fontSize: 15}}>{countDayryTask(currentYear, month + 1, day)}</u>
                 </a>
               </td>
             );

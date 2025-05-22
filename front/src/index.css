@@ -82,7 +82,7 @@ button:focus-visible {
   background-color: #e7f6fd;
 }
 .weekDay {
-  font-size: 30px;
+  font-size: 40px;
   color:gray;
   background-color:white;
 }
@@ -90,30 +90,30 @@ button:focus-visible {
   vertical-align: top;
   color: #aaa;
   width: 70px;
-  height: 50px;
+  height: 40px;
 }
 .days {
   vertical-align: top;
   width: 70px;
-  height: 50px;
+  height: 40px;
 }
 .today {
   vertical-align: top;
   color: red;
   width: 70px;
-  height: 50px;
+  height: 40px;
   background-color: #eee;
 }
 
 .muteA {
-  font-size: 20px;
+  font-size: 17px;
   color: #aaa;
 }
 .daysA {
-  font-size: 20px;
+  font-size: 17px;
 }
 .todayA {
-  font-size: 20px;
+  font-size: 17px;
   background-color: #eee;
 }
 
