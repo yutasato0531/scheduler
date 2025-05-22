@@ -40,7 +40,7 @@ function App() {
   //年、月、日、時、分の選択肢生成
   const optionOfYear = [];
   for (let i = 2000; i <= 2100; i++) {
-    if (i === new Date().getFullYear()) {
+    if (i === 2025) {
       optionOfYear.push(
         <option key={i} value={i} selecred>
           {i}
@@ -267,7 +267,7 @@ function App() {
           </div>
           <p width={300}>Add new task</p>
           <span>
-            <select name="year" className="input" ref={refYear}>
+            <select name="year" className="input" ref={refYear} defaultValue={today.getFullYear()}>
               {optionOfYear}
             </select>
             年
