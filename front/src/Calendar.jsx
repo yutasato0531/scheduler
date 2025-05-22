@@ -161,7 +161,7 @@ function Calendar(props) {
   //デイリータスクの件数カウント
   function countDayryTask(year, month, date) {
     const countTaskas = props.userTasks.filter(
-      (task) => task.year === year && task.month === month && task.date === date
+      (task) => task.year == year && task.month == month && task.date == date
     ).length;
     if(countTaskas === 0) {
       return 'no task';

@@ -40,7 +40,7 @@ function App() {
   //年、月、日、時、分の選択肢生成
   const optionOfYear = [];
   for (let i = 2000; i <= 2100; i++) {
-    if (i === today.getFullYear()) {
+    if (i === new Date().getFullYear()) {
       optionOfYear.push(
         <option key={i} value={i} selecred>
           {i}
