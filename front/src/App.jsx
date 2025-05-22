@@ -141,12 +141,14 @@ function App() {
   createUserList();
 
   //ログインしているユーザーのタスクリストの生成
-  async function createTaskList() {
-    await fetch(`/api/${refUserName.current.value}`, {
+  async function createTaskList(name) {
+    console.log(userName);
+    await fetch(`/api/${name}`, {
       method: 'GET',
     })
       .then((res) => res.text())
       .then((data) => setUserTasks(JSON.parse(data)));
+    console.log('user_name', name, 'tasks', userTasks);
   }
 
   //新しいタスクの追加
@@ -175,7 +177,8 @@ function App() {
     })
       .then((res) => res.text())
       .then((data) => console.log(JSON.parse(data)));
-    createTaskList();
+    createTaskList(userName);
+    clearRefInput();
     setNewTaskModal('none');
   }
 
@@ -200,19 +203,25 @@ function App() {
         if (state === 'successful') {
           setUserName(userName);
           setUserId(user[0].id);
-          createTaskList();
           setLoginModal('none');
           setLoginButton('Log out');
-          createTaskList();
           console.log(userName, user[0].id);
           console.log(userTasks);
+          createTaskList(userName);
         } else {
           setLoginButton('Log in');
           setAlert('incorrect user name of password');
           setAlertModal('block');
         }
       });
+    clearRefInput();
     setLoginModal('none');
+  }
+
+  function clearRefInput() {
+    refNewTask.current.value = '';
+    refUserName.current.value = '';
+    refPassword.current.value = '';
   }
 
   return (
