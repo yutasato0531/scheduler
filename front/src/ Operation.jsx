@@ -20,6 +20,8 @@ function Operation(props) {
       props.setUserName('');
       props.setUserId('');
       props.setTaskList([]);
+      props.setUserTasks([]);
+      
       props.setLoginButton('Log in')
     }else{
       props.setLoginModal('block')
@@ -29,7 +31,6 @@ function Operation(props) {
   return (
     <>
       <div className="buttonContainer">
-        {/* <input ref={refInput} className="input" placeholder="user name" style={{marginLeft: 0, height: 38, width: 100, borderRadius: 10}}></input> */}
         <button
           style={{
             marginLeft: 10,

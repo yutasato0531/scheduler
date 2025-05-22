@@ -1,13 +1,11 @@
 import './App.css';
 import './index.css';
-// import { useState } from 'react';
+// import { useState, useRef, useEffect } from 'react';
 
 function Calendar(props) {
-  const date = new Date();
-  // const currentMonth = date.getMonth();
 
-  // const [year, setYear] = useState(0);
-  // const [month, setMonth] = useState(currentMonth);
+
+  const date = new Date();
 
   const monthName = {
     0: 'January',
@@ -41,27 +39,18 @@ function Calendar(props) {
   //日付の生成
   const weeks = [];
   function createDays(month, year) {
-    console.log("🚀 ~ createDays ~ month, year:", month, year)
-
+    console.log('in カレンダー', props.userTasks)
     //現在の西暦を取得
     const currentYear = date.getFullYear() + year;
-    
+
     //翌月の0日目から当月の最終日を設定 .getDate()はDateインスタンスの日を取得
-    const daysInMonth = new Date(
-      currentYear,
-      month + 1,
-      0
-    ).getDate();
+    const daysInMonth = new Date(currentYear, month + 1, 0).getDate();
 
     //当月の初日の曜日を取得 .getDay()はDateインスタンスの曜日取得
     const firstDay = new Date(currentYear, month, 1).getDay();
 
     //当月の0日目から前月の最終日を取得
-    const daysInPrevMonth = new Date(
-      currentYear,
-      month,
-      0
-    ).getDate();
+    const daysInPrevMonth = new Date(currentYear, month, 0).getDate();
 
     let dayCount = 1;
 
@@ -73,19 +62,25 @@ function Calendar(props) {
       const days = [];
       for (let j = 0; j < 7; j++) {
         if (i === 0 && j < firstDay) {
-          const day = prevDayCount;
-          console.log()
+          console.log();
           days.push(
             <td
               className="mute"
               onClick={() =>
                 month === 0
-                  ? viewTasks(currentYear - 1, 12, day)
-                  : viewTasks(currentYear, month, day)
+                  ? viewTasks(currentYear - 1, 12, prevDayCount)
+                  : viewTasks(currentYear, month, prevDayCount)
               }
             >
               <a className="muteA" href="#">
                 {prevDayCount}
+                <br />
+                <br />
+                <u>
+                  {month === 0
+                    ? countDayryTask(currentYear - 1, 12, prevDayCount)
+                    : countDayryTask(currentYear - 1, month, prevDayCount)}
+                </u>
               </a>
             </td>
           );
@@ -97,20 +92,19 @@ function Calendar(props) {
               className="mute"
               onClick={() =>
                 month === 11
-                  ? viewTasks(
-                      currentYear + 1,
-                      1,
-                      nextMonthDayCount
-                    )
-                  : viewTasks(
-                      currentYear,
-                      month + 2,
-                      nextMonthDayCount
-                    )
+                  ? viewTasks(currentYear + 1, 1, nextMonthDayCount)
+                  : viewTasks(currentYear, month + 2, nextMonthDayCount)
               }
             >
               <a className="muteA" href="#">
                 {nextMonthDayCount}
+                <br />
+                <br />
+                <u>
+                  {month === 11
+                    ? countDayryTask(currentYear + 1, 1, nextMonthDayCount)
+                    : countDayryTask(currentYear + 1, month, nextMonthDayCount)}
+                </u>
               </a>
             </td>
           );
@@ -125,12 +119,13 @@ function Calendar(props) {
             days.push(
               <td
                 className="today"
-                onClick={() =>
-                  viewTasks(currentYear, month + 1, day)
-                }
+                onClick={() => viewTasks(currentYear, month + 1, day)}
               >
                 <a className="todayA" href="#">
                   {dayCount}
+                  <br />
+                  <br />
+                  <u>{countDayryTask(currentYear, month + 1, day)}</u>
                 </a>
               </td>
             );
@@ -139,12 +134,13 @@ function Calendar(props) {
             days.push(
               <td
                 className="days"
-                onClick={() =>
-                  viewTasks(currentYear, month + 1, day)
-                }
+                onClick={() => viewTasks(currentYear, month + 1, day)}
               >
                 <a className="daysA" href="#">
                   {dayCount}
+                  <br />
+                  <br />
+                  <u>{countDayryTask(currentYear, month + 1, day)}</u>
                 </a>
               </td>
             );
@@ -160,37 +156,48 @@ function Calendar(props) {
     }
   }
 
+  createDays(props.month, props.year);
+
+  //デイリータスクの件数カウント
+  function countDayryTask(year, month, date) {
+    const countTaskas = props.userTasks.filter(
+      (task) => task.year === year && task.month === month && task.date === date
+    ).length;
+    if(countTaskas === 0) {
+      return 'no task';
+    }else if(countTaskas === 1){
+      return `${countTaskas} item`;
+    }else{
+      return `${countTaskas} items`;
+    }
+  }
+
+  //デイリータクスク要素の生成
   function viewTasks(year, month, date) {
     const filteredTasks = props.userTasks.filter(
-      task =>
-        task.year === year  &&
-        task.month === month &&
-        task.date === date
+      (task) => task.year === year && task.month === month && task.date === date
     );
     const htmlTasks = filteredTasks.map((item, index) => (
       <li key={index}>
         {item.hour}時{item.minute}分：{item.task}
       </li>
     ));
-    console.log(props.userTasks)
-    props.setTaskList(htmlTasks);
+    console.log(props.userTasks);
+    props.setDayryTaskList(htmlTasks);
     props.setTasksModal('block');
     props.setSelectedDay(`${year}年 ${month}月${date}日`);
   }
 
-  createDays(props.month, props.year);
-
+  //カレンダーの月を移動
   function monthMove(direction) {
     if (direction && props.month === 11) {
       createDays(0, props.year + 1);
       props.setYear(props.year + 1);
       props.setMonth(0);
-      console.log('１月');
     } else if (!direction && props.month === 0) {
       createDays(11, props.year - 1);
       props.setYear(props.year - 1);
       props.setMonth(11);
-      console.log('１２月');
     } else if (direction) {
       createDays(props.month + 1, props.year);
       props.setMonth(props.month + 1);

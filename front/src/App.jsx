@@ -15,11 +15,12 @@ function App() {
   const [alertModal, setAlertModal] = useState('none');
   const [loginModal, setLoginModal] = useState('none');
   const [selectedDay, setSelectedDay] = useState();
-  const [taskList, setTaskList] = useState();
+  const [DayryTaskList, setDayryTaskList] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
   const [alert, setAlert] = useState();
   const [loginButton, setLoginButton] = useState('Log in');
+  const [userTasks, setUserTasks] = useState([]);
 
   //useRefの定義
   const refNewTask = useRef();
@@ -31,12 +32,6 @@ function App() {
   const refUserName = useRef();
   const refPassword = useRef();
 
-  //ユーザーを切り替えた時にユーザーのタスクリスト生成
-  useEffect(() => {
-    console.log('Effect');
-    createTaskList();
-  }, [createTaskList, userId]);
-
   //Appがマウントされた時にログイン画面のモーダルを表示
   useEffect(() => {
     setLoginModal('block');
@@ -47,24 +42,32 @@ function App() {
   for (let i = 2000; i <= 2100; i++) {
     if (i === today.getFullYear()) {
       optionOfYear.push(
-        <option value={i} selected>
+        <option key={i} value={i} selecred>
           {i}
         </option>
       );
     } else {
-      optionOfYear.push(<option value={i}>{i}</option>);
+      optionOfYear.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
     }
   }
   const optionOfMonth = [];
   for (let i = 0; i <= 11; i++) {
     if (i === today.getMonth()) {
       optionOfMonth.push(
-        <option value={i + 1} selected>
+        <option key={i} value={i + 1} selected>
           {i + 1}
         </option>
       );
     } else {
-      optionOfMonth.push(<option value={i + 1}>{i + 1}</option>);
+      optionOfMonth.push(
+        <option key={i} value={i + 1}>
+          {i + 1}
+        </option>
+      );
     }
   }
   const optionOfDay = [];
@@ -75,36 +78,48 @@ function App() {
   ) {
     if (i === today.getDate()) {
       optionOfDay.push(
-        <option value={i} selected>
+        <option key={i} value={i} selected>
           {i}
         </option>
       );
     } else {
-      optionOfDay.push(<option value={i}>{i}</option>);
+      optionOfDay.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
     }
   }
   const optionOfHour = [];
   for (let i = 0; i <= 24; i++) {
     if (i === today.getHours()) {
       optionOfHour.push(
-        <option value={i} selected>
+        <option kye={i} value={i} selected>
           {i}
         </option>
       );
     } else {
-      optionOfHour.push(<option value={i}>{i}</option>);
+      optionOfHour.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
     }
   }
   const optionOfMinute = [];
   for (let i = 0; i <= 45; i += 15) {
-    if (i === today.getMinutes()) {
+    if (i === Math.floor(today.getMinutes() / 15) * 15) {
       optionOfMinute.push(
-        <option value={i} selected>
+        <option keu={i} value={i} selected>
           {i}
         </option>
       );
     } else {
-      optionOfMinute.push(<option value={i}>{i}</option>);
+      optionOfMinute.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
     }
   }
 
@@ -113,8 +128,8 @@ function App() {
   function createAllUsers(input) {
     allUsers.splice(0);
     allUsers.push(...input);
-    console.log(allUsers);
   }
+
   async function createUserList() {
     await fetch(`/api`, {
       method: 'GET',
@@ -123,23 +138,18 @@ function App() {
       .then((data) => createAllUsers(JSON.parse(data)));
   }
 
+  createUserList();
+
   //ログインしているユーザーのタスクリストの生成
-  const userTasks = [];
-  function createUserTasks(input) {
-    userTasks.splice(0);
-    userTasks.push(...input);
-    console.log(userTasks);
-  }
   async function createTaskList() {
-    await fetch(`/api/${userName}`, {
+    await fetch(`/api/${refUserName.current.value}`, {
       method: 'GET',
     })
       .then((res) => res.text())
-      .then((data) => createUserTasks(JSON.parse(data)));
+      .then((data) => setUserTasks(JSON.parse(data)));
   }
 
-  createUserList();
-
+  //新しいタスクの追加
   async function addNewTask() {
     if (!userId || !refNewTask.current.value) {
       setAlert('user or task is not defined');
@@ -165,51 +175,53 @@ function App() {
     })
       .then((res) => res.text())
       .then((data) => console.log(JSON.parse(data)));
+    createTaskList();
     setNewTaskModal('none');
   }
 
+  //パスワードのハッシュを比較してログイン
   async function login() {
-    console.log(allUsers);
-    console.log(refUserName.current.value)
-    const user = allUsers.filter((user) => user.user_name === refUserName.current.value);
+    const user = allUsers.filter(
+      (user) => user.user_name === refUserName.current.value
+    );
 
-    if (user.length !== 0) {
-      const userName =refUserName.current.value;
-      const password = refPassword.current.value;
-      await fetch(`/api/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({userName: userName, password: password}),
-      })
-        .then((res) => res.text())
-        .then(state => {
-          if(state === 'successful') {
-            setUserName(userName);
-            setUserId(user[0].id);
-            setLoginModal('none');
-            setLoginButton('Log out');
-            console.log(userName, user[0].id);
-          }else {
-      setLoginButton('Log in');
-      setAlert('incorrect user name of password');
-      setAlertModal('block');
-    }
-        });
-      
-    } else {
-      setLoginButton('Log in');
-      setAlert('incorrect user name of password');
-      setAlertModal('block');
-    }
+    const userName = refUserName.current.value;
+    const password = refPassword.current.value;
+
+    await fetch(`/api/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userName: userName, password: password }),
+    })
+      .then((res) => res.text())
+      .then((state) => {
+        if (state === 'successful') {
+          setUserName(userName);
+          setUserId(user[0].id);
+          createTaskList();
+          setLoginModal('none');
+          setLoginButton('Log out');
+          createTaskList();
+          console.log(userName, user[0].id);
+          console.log(userTasks);
+        } else {
+          setLoginButton('Log in');
+          setAlert('incorrect user name of password');
+          setAlertModal('block');
+        }
+      });
     setLoginModal('none');
   }
 
   return (
     <>
       {/* タイトルの描画 */}
-      <h1 className="App">{userName} simple scheduler</h1>
+      <span style={{ fontSize: 50, marginLeft: 300 }}>simple schedule</span>
+      <span style={{ marginLeft: 250, marginRight: 0, fontSize: 20 }}>
+        user:{userName}
+      </span>
 
       {/* 操作ボタンの描画 */}
       <Operation
@@ -223,7 +235,8 @@ function App() {
         setLoginButton={setLoginButton}
         setUserName={setUserName}
         setUserId={setUserId}
-        setTaskList={setTaskList}
+        setTaskList={setDayryTaskList}
+        setUserTasks={setUserTasks}
       />
       {/* カレンダーの描画 */}
       <Calendar
@@ -233,7 +246,7 @@ function App() {
         setYear={setYear}
         setTasksModal={setTasksModal}
         setSelectedDay={setSelectedDay}
-        setTaskList={setTaskList}
+        setDayryTaskList={setDayryTaskList}
         userTasks={userTasks}
       />
 
@@ -288,14 +301,14 @@ function App() {
           <h3>
             <u>{selectedDay}</u>
           </h3>
-          <div style={{ marginLeft: 150 }}>
-            <list style={{ textAlign: 'left' }}>{taskList}</list>
+          <div style={{ marginLeft: 30 }}>
+            <list style={{ textAlign: 'left' }}>{DayryTaskList}</list>
           </div>
         </div>
       </div>
 
       {/* 警告のモーダル */}
-      <div style={{ display: alertModal }} class="modal">
+      <div style={{ display: alertModal }} className="modal">
         <div className="modal-content">
           <span className="closeModal" onClick={() => setAlertModal('none')}>
             &times;
@@ -305,8 +318,8 @@ function App() {
       </div>
 
       {/* ログイン画面のモーダル */}
-      <div style={{ display: loginModal }} class="modal">
-        <div class="modal-content" style={{ width: 300 }}>
+      <div style={{ display: loginModal }} className="modal">
+        <div className="modal-content" style={{ width: 300 }}>
           <span
             className="closeModal"
             onClick={() => {
@@ -321,11 +334,8 @@ function App() {
             <h4 style={{ marginBottom: 0 }}>User name</h4>
             <input ref={refUserName}></input>
             <h4 style={{ marginBottom: 0 }}>Password</h4>
-            <input ref={refPassword}></input>
-            <button
-              style={{ marginTop: 30, marginLeft: 30 }}
-              onClick={login}
-            >
+            <input ref={refPassword} type="password"></input>
+            <button style={{ marginTop: 30, marginLeft: 30 }} onClick={login}>
               Log in
             </button>
           </div>
