@@ -6,14 +6,14 @@
 const taskData = [];
 
 const taskList = [
-  'breakfast',
-  'lunch',
-  'dinner',
-  'running',
-  'study',
-  'meeting',
-  'hospital',
-  'cooking',
+  '始まりの火を継ぐ',
+  '破砕戦争に出陣',
+  'エルデの王となる',
+  '狭間の地の褪せ人となる',
+  '影の地にてミケラと約束の王に見える',
+  'ミケラとの戦いに赴く。心が折れそうだ。',
+  '死のルーンを盗む',
+  'c',
   'game',
   'training',
   'skiing',

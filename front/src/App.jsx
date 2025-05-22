@@ -52,7 +52,7 @@ function App() {
         </option>
       );
     } else {
-      optionOfYear.push(<option  value={i}>{i}</option>);
+      optionOfYear.push(<option value={i}>{i}</option>);
     }
   }
   const optionOfMonth = [];
@@ -168,21 +168,42 @@ function App() {
     setNewTaskModal('none');
   }
 
-  function login(userName) {
+  async function login() {
     console.log(allUsers);
-    const user = allUsers.filter((user) => user.user_name === userName);
+    console.log(refUserName.current.value)
+    const user = allUsers.filter((user) => user.user_name === refUserName.current.value);
+
     if (user.length !== 0) {
-      setUserName(userName);
-      setUserId(user[0].id);
-      setLoginModal('none');
-      setLoginButton('Log out');
-      console.log(userName, userId);
-    } else {
-      setLoginModal('none');
+      const userName =refUserName.current.value;
+      const password = refPassword.current.value;
+      await fetch(`/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({userName: userName, password: password}),
+      })
+        .then((res) => res.text())
+        .then(state => {
+          if(state === 'successful') {
+            setUserName(userName);
+            setUserId(user[0].id);
+            setLoginModal('none');
+            setLoginButton('Log out');
+            console.log(userName, user[0].id);
+          }else {
       setLoginButton('Log in');
-      setAlert('user is not found');
+      setAlert('incorrect user name of password');
       setAlertModal('block');
     }
+        });
+      
+    } else {
+      setLoginButton('Log in');
+      setAlert('incorrect user name of password');
+      setAlertModal('block');
+    }
+    setLoginModal('none');
   }
 
   return (
@@ -286,10 +307,13 @@ function App() {
       {/* ログイン画面のモーダル */}
       <div style={{ display: loginModal }} class="modal">
         <div class="modal-content" style={{ width: 300 }}>
-          <span className="closeModal" onClick={() => {
-            setLoginModal('none');
-            setLoginButton('Log in')
-            }}>
+          <span
+            className="closeModal"
+            onClick={() => {
+              setLoginModal('none');
+              setLoginButton('Log in');
+            }}
+          >
             &times;
           </span>
           <h3>Log in</h3>
@@ -300,7 +324,7 @@ function App() {
             <input ref={refPassword}></input>
             <button
               style={{ marginTop: 30, marginLeft: 30 }}
-              onClick={() => login(refUserName.current.value)}
+              onClick={login}
             >
               Log in
             </button>
