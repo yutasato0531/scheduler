@@ -143,7 +143,7 @@ function Calendar(props) {
       weeks.push(<tr>{days}</tr>);
 
       if (dayCount - daysInMonth > 7) {
-        break;
+        // break;
       }
     }
   }

@@ -5,9 +5,9 @@ import Operation from './ Operation';
 
 function App() {
   const today = new Date();
+  const currentMonth = today.getMonth();
 
   //useStateの定義
-  const currentMonth = today.getMonth();
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(0);
   const [newTaskModal, setNewTaskModal] = useState('none');
