@@ -158,9 +158,9 @@ function Calendar(props) {
     if(countTaskas === 0) {
       return <span style={{fontSize: 15, color: 'gray'}}>no task</span>;
     }else if(countTaskas === 1){
-      return <u style={{fontSize: 15}}>{countTaskas} item</u>;
+      return <u style={{fontSize: 15}}>{countTaskas} task</u>;
     }else{
-      return <u style={{fontSize: 15}}>{countTaskas} items</u>;
+      return <u style={{fontSize: 15}}>{countTaskas} tasks</u>;
     }
   }
 
