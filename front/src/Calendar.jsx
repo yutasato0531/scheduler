@@ -75,11 +75,9 @@ function Calendar(props) {
               <a className="muteA" href="#">
                 {prevDayCount}
                 <br />
-                <u style={{fontSize: 15}}>
                   {month === 0
                     ? countDayryTask(currentYear - 1, 12, prevDayCount)
                     : countDayryTask(currentYear - 1, month, prevDayCount)}
-                </u>
               </a>
             </td>
           );
@@ -98,11 +96,9 @@ function Calendar(props) {
               <a className="muteA" href="#">
                 {nextMonthDayCount}
                 <br />
-                <u style={{fontSize: 15}}>
                   {month === 11
                     ? countDayryTask(currentYear + 1, 1, nextMonthDayCount)
                     : countDayryTask(currentYear + 1, month, nextMonthDayCount)}
-                </u>
               </a>
             </td>
           );
@@ -122,7 +118,7 @@ function Calendar(props) {
                 <a className="todayA" href="#">
                   {dayCount}
                   <br />
-                  <u style={{fontSize: 15}}>{countDayryTask(currentYear, month + 1, day)}</u>
+                  {countDayryTask(currentYear, month + 1, day)}
                 </a>
               </td>
             );
@@ -136,7 +132,7 @@ function Calendar(props) {
                 <a className="daysA" href="#">
                   {dayCount}
                   <br />
-                  <u style={{fontSize: 15}}>{countDayryTask(currentYear, month + 1, day)}</u>
+                  {countDayryTask(currentYear, month + 1, day)}
                 </a>
               </td>
             );
@@ -160,11 +156,11 @@ function Calendar(props) {
       (task) => task.year == year && task.month == month && task.date == date
     ).length;
     if(countTaskas === 0) {
-      return 'no task';
+      return <span style={{fontSize: 15, color: 'gray'}}>no task</span>;
     }else if(countTaskas === 1){
-      return `${countTaskas} item`;
+      return <u style={{fontSize: 15}}>{countTaskas} item</u>;
     }else{
-      return `${countTaskas} items`;
+      return <u style={{fontSize: 15}}>{countTaskas} items</u>;
     }
   }
 

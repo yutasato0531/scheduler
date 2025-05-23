@@ -35,6 +35,7 @@ function Operation(props) {
           style={{
             marginLeft: 10,
             height: 40,
+            width: 100,
             color: 'black',
             backgroundColor: 'white',
           }}
