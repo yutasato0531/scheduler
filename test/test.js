@@ -4,7 +4,7 @@ const { app } = require('../server.js');
 const db = require('../index.js');
 require('dotenv').config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.DEV_PORT;
 const locaHost = `http://localhost:${PORT}`
 
 const expect = chai.expect;
@@ -29,6 +29,7 @@ describe('POST /api with no params', () => {
   });
 
   it('should return status 200.', async () => {
+    console.log(PORT);
     const response = await fetch(`${locaHost}/api`, {
       method: 'GET',
     });
